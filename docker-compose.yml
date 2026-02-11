@@ -1,0 +1,80 @@
+services:
+  # ===== Base de données MySQL =====
+  # Service MySQL 8.0 pour stocker les produits
+  catalog-db:
+    image: mysql:8.0
+    container_name: catalog-mysql
+    
+    # Variables d'environnement pour la configuration MySQL
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword      # Mot de passe root
+      MYSQL_DATABASE: catalogdb            # Base de données créée automatiquement
+      MYSQL_USER: cataloguser              # Utilisateur applicatif
+      MYSQL_PASSWORD: catalogpass          # Mot de passe utilisateur
+    
+    # Exposition du port MySQL
+    ports:
+      - "3307:3306"
+    
+    # Volume persistant pour les données MySQL
+    # IMPORTANT: Sans volume, les données sont perdues au redémarrage du conteneur
+    volumes:
+      - catalog-mysql-data:/var/lib/mysql
+    
+    # Réseau dédié pour la communication entre services
+    networks:
+      - catalog-network
+    
+    # Health check pour s'assurer que MySQL est prêt
+    # L'API attendra que ce check soit "healthy" avant de démarrer
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pmypassword"]
+      interval: 10s          # Vérification toutes les 10 secondes
+      timeout: 5s            # Timeout de 5 secondes
+      retries: 5             # 5 tentatives avant échec
+      start_period: 30s      # Délai initial de 30 secondes
+
+  # ===== API Catalog =====
+  # Microservice .NET qui expose l'API REST
+  catalog-api:
+    build:
+      context: .
+      dockerfile: Catalog.API/Dockerfile
+    
+    container_name: catalog-api
+    
+    # Variables d'environnement pour l'application .NET
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      # IMPORTANT: Utiliser "catalog-db" comme nom de serveur (nom du service)
+      # Docker Compose crée un réseau avec résolution DNS automatique
+      - ConnectionStrings__DefaultConnection=Server=catalog-db;Port=3306;Database=catalogdb;User=cataloguser;Password=catalogpass;
+    
+    # Mappage de port : localhost:5001 -> conteneur:8080
+    ports:
+      - "5001:8080"
+    
+    # Dépendance : Attendre que MySQL soit "healthy"
+    # Sans condition, l'API pourrait démarrer avant que MySQL soit prêt
+    depends_on:
+      catalog-db:
+        condition: service_healthy
+    
+    networks:
+      - catalog-network
+    
+    # Politique de redémarrage
+    restart: unless-stopped
+
+# ===== Volumes =====
+# Définition des volumes nommés pour la persistance
+volumes:
+  catalog-mysql-data:
+    driver: local        # Stockage local sur l'hôte Docker
+
+# ===== Réseaux =====
+# Réseau bridge personnalisé pour l'isolation et la communication
+networks:
+  catalog-network:
+    driver: bridge
