@@ -46,7 +46,7 @@ services:
     # Variables d'environnement pour l'application .NET
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
       # IMPORTANT: Utiliser "catalog-db" comme nom de serveur (nom du service)
       # Docker Compose crée un réseau avec résolution DNS automatique
       - ConnectionStrings__DefaultConnection=Server=catalog-db;Port=3306;Database=catalogdb;User=cataloguser;Password=catalogpass;

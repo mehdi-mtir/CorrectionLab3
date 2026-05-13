@@ -121,3 +121,4 @@ E:\formations2026\02-09-DotNet-Microservices\ateliers\Lab3\Lab3_Catalog_API_NET9
 E:\formations2026\02-09-DotNet-Microservices\ateliers\Lab3\Lab3_Catalog_API_NET9_Solution_Complete\Lab3Solution\Catalog.API\obj\Debug\net9.0\Catalog.API.pdb
 E:\formations2026\02-09-DotNet-Microservices\ateliers\Lab3\Lab3_Catalog_API_NET9_Solution_Complete\Lab3Solution\Catalog.API\obj\Debug\net9.0\Catalog.API.genruntimeconfig.cache
 E:\formations2026\02-09-DotNet-Microservices\ateliers\Lab3\Lab3_Catalog_API_NET9_Solution_Complete\Lab3Solution\Catalog.API\obj\Debug\net9.0\ref\Catalog.API.dll
+E:\formations2026\02-09-DotNet-Microservices\ateliers\Lab3\Lab3_Catalog_API_NET9_Solution_Complete\Lab3Solution\Catalog.API\obj\Debug\net9.0\Catalog.API.sourcelink.json
